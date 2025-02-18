@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "BreedDimMaxID"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable1",
+						"type": "DatasetReference"
+					},
+					"name": "sourceBreedDim"
 				}
 			],
 			"sinks": [],
@@ -28,9 +35,25 @@
 				{
 					"name": "aggregateBreedKeys",
 					"description": "Aggregating data by 'SPECIES, PRIMARY_BREED, SECONDARY_BREED, MAXBREEDSK' producing columns"
+				},
+				{
+					"name": "joinToTarget"
+				},
+				{
+					"name": "filterExistingRows",
+					"description": "Filtering rows using expressions on columns 'SPECIES, PRIMARY_BREED, SECONDARY_BREED)"
+				},
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "derivedColumn"
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     DI_JOB_ID as string (\"59\")",
+				"}",
 				"source(output(",
 				"          LICENSE_ISSUE_DATE as string,",
 				"          LICENSE_NUMBER as string,",
@@ -52,6 +75,20 @@
 				"     validateSchema: false,",
 				"     query: 'SELECT NVL(MAX(BREED_SK), 0) AS MaxBreedSK FROM TEMP_SCHEMA.BREED_DIM',",
 				"     format: 'query') ~> BreedDimMaxID",
+				"source(output(",
+				"          LICENSE_ISSUE_DATE as string,",
+				"          LICENSE_NUMBER as string,",
+				"          ANIMAL_NAME as string,",
+				"          SPECIES as string,",
+				"          PRIMARY_BREED as string,",
+				"          SECONDARY_BREED as string,",
+				"          ZIP_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceBreedDim",
 				"sourceStg, BreedDimMaxID join(1==1,",
 				"     joinType:'cross',",
 				"     matchType:'exact',",
@@ -61,7 +98,21 @@
 				"          PRIMARY_BREED,",
 				"          SECONDARY_BREED,",
 				"          MAXBREEDSK),",
-				"     COUNT_ROW = count(LICENSE_NUMBER)) ~> aggregateBreedKeys"
+				"     COUNT_ROW = count(LICENSE_NUMBER)) ~> aggregateBreedKeys",
+				"aggregateBreedKeys, sourceBreedDim join(aggregateBreedKeys@PRIMARY_BREED == sourceBreedDim@PRIMARY_BREED",
+				"     && aggregateBreedKeys@SECONDARY_BREED == sourceBreedDim@SECONDARY_BREED",
+				"     && aggregateBreedKeys@SPECIES == sourceBreedDim@SPECIES,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinToTarget",
+				"joinToTarget filter(isNull(SPECIES_NAME)&&isNull(PRIMARY_BREED_NAME)&& isNull(SECONDARY_BREED_NAME)) ~> filterExistingRows",
+				"filterExistingRows keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey derive(BREED_SK = MAXBREEDSK + RowNum,",
+				"          DI_CREATED_DT = currentTimestamp(),",
+				"          DI_JOB_ID = $DI_JOB_ID) ~> derivedColumn"
 			]
 		}
 	}
