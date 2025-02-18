@@ -1,5 +1,5 @@
 {
-	"name": "dataflow5",
+	"name": "df_Location_Dim",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
