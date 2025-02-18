@@ -1,0 +1,48 @@
+{
+	"name": "dataflow4",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable1",
+						"type": "DatasetReference"
+					},
+					"name": "FileSource"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "TransposeColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          LICENSE_ISSUE_DATE as string,",
+				"          LICENSE_NUMBER as string,",
+				"          ANIMAL_NAME as string,",
+				"          SPECIES as string,",
+				"          PRIMARY_BREED as string,",
+				"          SECONDARY_BREED as string,",
+				"          ZIP_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> FileSource",
+				"FileSource derive({LICENSE ISSUE DATE} = toDate(LICENSE_ISSUE_DATE, 'MMMM dd yyyy'),",
+				"          {SECONDARY BREED} = iifNull(SECONDARY_BREED, 'Unknown'),",
+				"          {ZIP CODE} = lpad(toString(ZIP_CODE), 5,'0'),",
+				"          Species = upper(SPECIES),",
+				"          {LICENSE NUMBER} = toInteger(translate(LICENSE_NUMBER, 'S', '')),",
+				"          {ANIMAL NAME} = translate(ANIMAL_NAME, '()[]', ''),",
+				"          JOB_ID = uuid(),",
+				"          LOAD_DT = currentTimestamp(),",
+				"          column1 = ERROR_FUNCTION('')) ~> TransposeColumns"
+			]
+		}
+	}
+}

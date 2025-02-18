@@ -1,0 +1,48 @@
+{
+	"name": "pipeline2",
+	"properties": {
+		"activities": [
+			{
+				"name": "StageData",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_Seattle_Pet_License_Cleanup_Stage",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"FileSource": {
+								"SCHEMA_PETLIC": "''",
+								"TABLE_STAGE": "''"
+							},
+							"sinkSF": {
+								"SCHEMA_PETLIC": "''",
+								"TABLE_STAGE": "''"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Coarse"
+				}
+			}
+		],
+		"parameters": {
+			"Job_Id": {
+				"type": "string",
+				"defaultValue": "@substring(pipeline().RunId, 1, 10)"
+			}
+		},
+		"annotations": []
+	}
+}

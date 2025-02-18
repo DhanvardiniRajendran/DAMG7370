@@ -1,0 +1,42 @@
+{
+	"name": "pipeline3",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_Load_Breed_Dim",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sourceStg": {
+								"SCHEMA_PETLIC": "''",
+								"TABLE_STAGE": "''"
+							},
+							"BreedDimMaxID": {
+								"SCHEMA_PETLIC": "''",
+								"TABLE_STAGE": "''"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

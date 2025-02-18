@@ -7,10 +7,12 @@
 		},
 		"parameters": {
 			"SCHEMA_PETLIC": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "''"
 			},
 			"TABLE_STAGE": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "''"
 			}
 		},
 		"annotations": [],
