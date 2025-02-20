@@ -20,7 +20,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTable1",
+						"referenceName": "SnowflakeTable4",
 						"type": "DatasetReference"
 					},
 					"name": "sourceBreedDim"
@@ -75,18 +75,7 @@
 				"     validateSchema: false,",
 				"     query: 'SELECT NVL(MAX(BREED_SK), 0) AS MaxBreedSK FROM TEMP_SCHEMA.BREED_DIM',",
 				"     format: 'query') ~> BreedDimMaxID",
-				"source(output(",
-				"          LICENSE_ISSUE_DATE as string,",
-				"          LICENSE_NUMBER as string,",
-				"          ANIMAL_NAME as string,",
-				"          SPECIES as string,",
-				"          PRIMARY_BREED as string,",
-				"          SECONDARY_BREED as string,",
-				"          ZIP_CODE as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DT as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceBreedDim",
 				"sourceStg, BreedDimMaxID join(1==1,",
