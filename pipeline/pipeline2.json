@@ -72,10 +72,6 @@
 							"BreedDimMaxID": {
 								"SCHEMA_PETLIC": "''",
 								"TABLE_STAGE": "''"
-							},
-							"sourceBreedDim": {
-								"SCHEMA_PETLIC": "''",
-								"TABLE_STAGE": "''"
 							}
 						}
 					},
