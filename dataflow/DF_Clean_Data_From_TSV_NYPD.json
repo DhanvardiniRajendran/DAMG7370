@@ -62,7 +62,7 @@
 				"          Latitude1 = iif(isNull(Latitude), toDouble(0), toDouble(Latitude)),",
 				"          AGE = replace(trim(AGE_GROUP), ' ', ''),",
 				"          ARR_BORO = iif(isNull(ARREST_BORO), 'UNKNOWN', ARREST_BORO),",
-				"          JOB_EXEC_ID = $Job_Id_Param,",
+				"          JOB_EXEC_ID = uuid(),",
 				"          JOB_LOAD_DATE = currentDate()) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
 				"          ARREST_KEY,",
