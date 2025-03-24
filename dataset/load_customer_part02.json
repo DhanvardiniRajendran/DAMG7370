@@ -1,0 +1,16 @@
+{
+	"name": "load_customer_part02",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "LAOFDIM_SCHEMA",
+			"table": "STG_CUSTOMER"
+		}
+	}
+}

@@ -1,0 +1,88 @@
+{
+	"name": "load_customer_part2",
+	"properties": {
+		"activities": [
+			{
+				"name": "load_customer_part2",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeV2Sink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "customerid",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CUSTOMER_ID",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CUSTOMER_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "billTo",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BILL_TO_ADDRESS",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "load_customer_part2",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "load_customer_part02",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
